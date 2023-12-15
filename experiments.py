@@ -16,12 +16,6 @@ alph_to_int["C"] = 1
 alph_to_int["G"] = 2
 alph_to_int["T"] = 3
 
-# A = "ACGTA"
-# B = "CGTAT"
-
-# print(nw(A, B, scores, gap_pen, alph_to_int))
-# print(hirschberg(A, B, scores, gap_pen, alph_to_int))
-
 def random_string(str_size):
     out_str = ""
 
@@ -90,4 +84,4 @@ def memory_experiment(N):
     plt.ylabel("Space Usage")
     plt.show()
 
-memory_experiment(N)
+runtime_experiment(N)
