@@ -1,4 +1,4 @@
-import needlemenwunsch.py
+from needlemenwunsch import nw
 
 def forwards(x, y, simMatrix, gapPenalty, alphEnum):
     len_1, len_2 = len(x), len(y)
@@ -38,11 +38,15 @@ def backwards(x, y, simMatrix, gapPenalty, alphEnum):
 
 def hirschberg(x, y, simMatrix, gapPenalty, alphEnum):
     len_1, len_2= len(x), len(y)
-    F = forwards(x[:len_1/2], y, simMatrix, gapPenalty, alphEnum) 
-    B = backwards(x[len_1/2:], y, simMatrix, gapPenalty, alphEnum)
-    split = [F[j] + B[len_2-j] for j in range(len_2+1)]
-    diff = split.index(max(split))
-    F, B, split = [], [], []
-    left_call = hirschberg(x[:len_1/2], y[:diff], simMatrix, gapPenalty, alphEnum)
-    right_call = hirschberg(x[len_1/2:], y[diff:], simMatrix, gapPenalty, alphEnum)
-    return [left_call[r] + right_call[r] for r in range(3)]
+
+    if len_1>=2 and len_2>=2:
+        F = forwards(x[:(len_1//2)], y, simMatrix, gapPenalty, alphEnum) 
+        B = backwards(x[(len_1//2):], y, simMatrix, gapPenalty, alphEnum)
+        split = [F[j] + B[len_2-j] for j in range(len_2+1)]
+        diff = split.index(max(split))
+        F, B, split = [], [], []
+        left_call = hirschberg(x[:len_1//2], y[:diff], simMatrix, gapPenalty, alphEnum)
+        right_call = hirschberg(x[len_1//2:], y[diff:], simMatrix, gapPenalty, alphEnum)
+        return [left_call[r] + right_call[r] for r in range(3)]
+    else:
+        return nw(x,y,simMatrix,gapPenalty,alphEnum)
