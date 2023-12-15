@@ -84,4 +84,3 @@ def memory_experiment(N):
     plt.ylabel("Space Usage")
     plt.show()
 
-runtime_experiment(N)
