@@ -1,6 +1,7 @@
 # CS466FinalProject (FALL 23)
 
 Our team members are Shalini Yagnik (yagnik2), Keerthana Nallamotu (kn19), Emily Tung (etung4), and Shirley Hua (shua6)
+
 Implementing Hirschberg and Needleman-Wunsch Algorithms
 
 Running Hirschberg Method in hirschberg.py or Needleman-Wunsch Method in needlemanwunsch.py:
