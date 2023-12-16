@@ -1,52 +1,49 @@
-from needlemenwunsch import nw
+from needlemanwunsch import needlemanwunsh
 
-def forwards(x, y, simMatrix, gapPenalty, alphEnum):
-    len_1, len_2 = len(x), len(y)
-    curr = []
-    for i in range(len_1+1):
-        curr.append([0]*(len_2+1))
-    for j in range(len_2+1):
-        curr[0][j] = gapPenalty*j
-    for i in range(1, len_1+1):
-        curr[i][0] = curr[i-1][0] + gapPenalty
-        for j in range(1, len_2+1):
-            curr[i][j] = max(curr[i-1][j-1] + simMatrix[alphEnum[x[i-1]]][alphEnum[y[j-1]]],
-                            curr[i-1][j] + gapPenalty,
-                            curr[i][j-1] + gapPenalty)
-        # Now clear row from memory.
-        curr[i-1] = []
-    return curr[len_1]
+def hirschberg(A, B, scores, alphtoint, gaps = -1):
+    if len(A)>1 and len(B)>1:
+        A1 = A[:(len(A)//2)]
 
-def backwards(x, y, simMatrix, gapPenalty, alphEnum):
-    # This is the backwards subroutine.
-    len_1, len_2 = len(x), len(y)
-    curr = []
-    for i in range(len_1+1):
-        curr.append([0]*(len_2+1))
-    for j in range(len_2+1):
-        curr[0][j] = gapPenalty*j
-    for i in range(1, len_1+1):
-        curr[i][0] = curr[i-1][0] + gapPenalty
-        for j in range(1, len_2+1):
-            curr[i][j] = max(curr[i-1][j-1] + simMatrix[alphEnum[x[len_1-i]]][alphEnum[y[len_2-j]]],
-                            curr[i-1][j] + gapPenalty,
-                            curr[i][j-1] + gapPenalty)
-        # Now clear row from memory.
-        curr[i-1] = []
-    return curr[len_1]
+        curr = []
+        for i in range(len(A1)+1):
+            curr.append([0]*(len(B)+1))
+        for i in range(len(B)+1):
+            curr[0][i] = gaps*i
+        for i in range(1, len(A1)+1):
+            curr[i][0] = curr[i-1][0]+gaps
+            for j in range(1, len(B)+1):
+                curr[i][j] = max(curr[i-1][j] + gaps, curr[i][j-1]+gaps,curr[i-1][j-1]+scores[alphtoint[A1[i-1]]][alphtoint[B[j-1]]])
+            curr[i-1] = []
 
+        pref = curr[len(A1)]
 
-def hirschberg(x, y, simMatrix, gapPenalty, alphEnum):
-    len_1, len_2= len(x), len(y)
+        A2 = A[(len(A)//2):]
 
-    if len_1>=2 and len_2>=2:
-        F = forwards(x[:(len_1//2)], y, simMatrix, gapPenalty, alphEnum) 
-        B = backwards(x[(len_1//2):], y, simMatrix, gapPenalty, alphEnum)
-        split = [F[j] + B[len_2-j] for j in range(len_2+1)]
-        diff = split.index(max(split))
-        F, B, split = [], [], []
-        left_call = hirschberg(x[:len_1//2], y[:diff], simMatrix, gapPenalty, alphEnum)
-        right_call = hirschberg(x[len_1//2:], y[diff:], simMatrix, gapPenalty, alphEnum)
-        return [left_call[r] + right_call[r] for r in range(3)]
+        curr = []
+        for i in range(len(A2)+1):
+            curr.append([0]*(len(B)+1))
+        for i in range(len(B)+1):
+            curr[0][i] = gaps*i
+        for i in range(1, len(A2)+1):
+            curr[i][0] = curr[i-1][0]+gaps
+            for j in range(1, len(B)+1):
+                curr[i][j] = max(curr[i-1][j]+gaps,curr[i][j-1]+gaps,curr[i-1][j-1]+scores[alphtoint[A2[len(A2)-i]]][alphtoint[B[len(B)-j]]])
+            curr[i-1] = []
+        suff =  curr[len(A2)]
+
+        midpts = []
+
+        for i in range(len(B)+1):
+            midpts.append(pref[i] + suff[len(B)-i])
+        
+        diff = midpts.index(max(midpts))
+
+        topleft = hirschberg(A[:len(A)//2],B[:diff],scores,alphtoint,gaps)
+        btmright = hirschberg(A[len(A)//2:],B[diff:],scores,alphtoint,gaps)
+
+        output = []
+        for i in range(3):
+            output.append(topleft[i] + btmright[i])
+        return output
     else:
-        return nw(x,y,simMatrix,gapPenalty,alphEnum)
+        return needlemanwunsh(A,B,scores,alphtoint,gaps)
